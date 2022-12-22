@@ -29,3 +29,13 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
+
+## Project Environment
+
+This project was made utilizing:
+
+#### React Version: 
+`18.2.0`
+
+#### Node Version:
+`18.11.0`
