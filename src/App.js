@@ -25,6 +25,8 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { URL, URL_CONTACTS, URL_CREATE_COONTACT } from "./utils/constants";
+import { authenticateUser, getQueryParams } from "./utils/utils";
 
 const App = () => {
   const { isOpen: isModalOpen, onOpen, onClose } = useDisclosure();
@@ -34,22 +36,11 @@ const App = () => {
   const [accessToken, setAccessToken] = useState("");
   const [isLoadingContacts, setLoadingContacts] = useState(true);
   const [isLoadingAdd, setLoadingAdd] = useState(false);
-  const [contactName, setContactName] = useState("");
-
-  const getQueryParams = (query = null) =>
-    [
-      ...new URLSearchParams(query || window.location.search || "").entries(),
-    ].reduce((a, [k, v]) => ((a[k] = v), a), {});
-
-  const authenticateUser = async () => {
-    window.location.href =
-      "http://login.salesforce.com/services/oauth2/authorize?client_id=3MVG9yZ.WNe6byQDn_tc_.9aCjm_xoITkY9Wk9TX1us_oY_8ImbWF6cUgmkrRWmL4xlitLBRQgGA9pupDi.76&redirect_uri=http%3A//localhost%3A3000&response_type=token&scopes=api%20id";
-  };
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
   const retrieveContactsList = (accessToken) => {
-    const urlContacts =
-      "https://test448-dev-ed.develop.my.salesforce.com/services/data/v56.0/query/?q=SELECT+name+from+Account";
-    fetch(urlContacts, {
+    fetch(URL_CONTACTS, {
       method: "GET",
       headers: {
         "Content-Type": "text/json",
@@ -72,9 +63,7 @@ const App = () => {
 
   const addContact = () => {
     setLoadingAdd(true);
-    const urlCreateContact =
-      "https://test448-dev-ed.develop.my.salesforce.com/services/data/v56.0/sobjects/Account/";
-    fetch(urlCreateContact, {
+    fetch(URL_CREATE_COONTACT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -82,7 +71,7 @@ const App = () => {
         "Access-Control-Allow-Origin": "*",
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({ Name: contactName }),
+      body: JSON.stringify({ Name: `${firstName} ${lastName}` }),
     })
       .then((response) => response.json())
       .then((json) => {
@@ -114,12 +103,12 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (window.location.href === "http://localhost:3000/") {
+    if (window.location.href === URL) {
       authenticateUser();
     }
 
     const { access_token: accessToken } = getQueryParams(
-      window.location.href.replace("http://localhost:3000/#", "")
+      window.location.href.replace(`${URL}#`, "")
     );
     setAccessToken(accessToken);
 
@@ -170,7 +159,7 @@ const App = () => {
 
       {isLoadingContacts && contactList && contactList.length === 0 && (
         <Box padding="6" boxShadow="lg" bg="white">
-          <SkeletonText mt="4" noOfLines={4} spacing="4" skeletonHeight="2" />
+          <SkeletonText mt="4" noOfLines={4} spacing="4" skeletonHeight="4" />
         </Box>
       )}
 
@@ -186,12 +175,20 @@ const App = () => {
           <ModalHeader>New Contact Form</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
+            <Stack spacing={3} marginBottom={3}>
+              <Input
+                color="teal"
+                placeholder="First Name"
+                size="md"
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+            </Stack>
             <Stack spacing={3}>
               <Input
                 color="teal"
-                placeholder="Contact Name"
+                placeholder="Last Name"
                 size="md"
-                onChange={(e) => setContactName(e.target.value)}
+                onChange={(e) => setLastName(e.target.value)}
               />
             </Stack>
           </ModalBody>

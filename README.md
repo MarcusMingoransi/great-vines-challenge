@@ -1,6 +1,6 @@
-# Greatvine Frontend Challenge
+# GreatVines Javascript/React Coding Challenge
 
-This project is related to the Greatvine Frontend Challenge built by Marcus Mingoransi.
+This project is related to the GreatVines Javascript/React Coding Challenge built by Marcus Mingoransi.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
